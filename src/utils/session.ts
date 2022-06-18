@@ -41,11 +41,14 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
   const theSession = session[sessionId]
   console.log('current session', theSession)
 
+
   const keepSuggestionIds: number[] = theSession.filter(s => s.id !== Number(suggestionId)).map(s => s.id)
   console.log('keep ids:', keepSuggestionIds)
 
   session[sessionId] = theSession.map(suggestion => {
-    const shouldReplace = !keepSuggestionIds.includes(suggestion.id)
+    // can't veto a suggestion that already has votes
+    const hasVotes = suggestion.votingUsers.length > 0
+    const shouldReplace = !keepSuggestionIds.includes(suggestion.id) && !hasVotes
     if (shouldReplace) {
       const newSuggestion = getRandomUniqueSuggestions(1, keepSuggestionIds)
       return newSuggestion[0]
