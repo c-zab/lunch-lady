@@ -10,20 +10,25 @@ export type Suggestion = {
   votingUsers: string[]
 }
 
+export type Time = {
+  value: unknown,
+  votingUsers: string[]
+}
+
 type Session = {
-  [id: string]: Suggestion[]
+  [id: string]: { suggestions: Suggestion[], times: Time[] }
 }
 
 const session: Session = { }
 
 const startLunchtime = (user: string) => {
-  session[user] = getRandomUniqueSuggestions(3)
+  session[user] = { suggestions: getRandomUniqueSuggestions(3), times: [] }
 }
 
 const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') => {
   console.log('vote', user, suggestionId)
   console.info('session', JSON.stringify(session[user], undefined, 4))
-  session[sessionId] = session[sessionId].map(suggestion => {
+  session[sessionId].suggestions = session[sessionId].suggestions.map(suggestion => {
     const shouldIncrement = suggestion.id === Number(suggestionId)
 
     const newVotingUsers = suggestion.votingUsers.includes(user) ? 
@@ -42,10 +47,10 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
   console.log('current session', theSession)
 
 
-  const keepSuggestionIds: number[] = theSession.filter(s => s.id !== Number(suggestionId)).map(s => s.id)
+  const keepSuggestionIds: number[] = theSession.suggestions.filter(s => s.id !== Number(suggestionId)).map(s => s.id)
   console.log('keep ids:', keepSuggestionIds)
 
-  session[sessionId] = theSession.map(suggestion => {
+  session[sessionId].suggestions = theSession.suggestions.map(suggestion => {
     // can't veto a suggestion that already has votes
     const hasVotes = suggestion.votingUsers.length > 0
     const shouldReplace = !keepSuggestionIds.includes(suggestion.id) && !hasVotes
@@ -124,7 +129,7 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
 
 const sessionToBlocks = (user: string) => {
   // console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
-  return suggestionsToBlocks(session[user])
+  return suggestionsToBlocks(session[user].suggestions)
 }
 
 export {
