@@ -66,6 +66,10 @@ const getRandomUniqueRestaurants = (numRestaurants: number, excludeIds: string[]
   return restaurants;
 };
 
+const getRestaurantById = (id: string) => {
+  return restaurants.find((restaurant) => restaurant.id === id)?.name;
+};
+
 const restaurantToBlock = (restaurant: any) => {
   return {
     type: 'section',
@@ -129,4 +133,4 @@ const formatDistance = (distance: number): string => {
   return `${distance.toFixed(2)} m`;
 };
 
-export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance };
+export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById };

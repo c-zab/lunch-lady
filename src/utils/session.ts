@@ -1,6 +1,6 @@
 import { Block, KnownBlock } from '@slack/bolt';
 import { restaurants } from '../constants/data.json';
-import { getRandomUniqueSuggestions, getStarRating, formatDistance } from '../utils/suggest';
+import { getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById } from '../utils/suggest';
 import { SLACK_BOT_OAUTH_TOKEN } from './env';
 
 // @ts-ignore
@@ -190,6 +190,7 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
 
     return blocks;
   });
+  blocks.push(currentLeaderBlock());
 
   return blocks;
 };
@@ -233,6 +234,31 @@ const timesToBlocks = (times: Time[]) => {
   });
 
   return blocks;
+};
+
+const currentLeaderBlock = (): KnownBlock => {
+  let times = session['blokash'].times;
+  console.log(times);
+  if (times.length > 0) {
+    let time = times.reduce((prev, current) => (prev.votingUsers.length > current.votingUsers.length ? prev : current));
+    const restaurant = getRestaurantById(time.restaurantId);
+
+    return {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `Current Leader: ${restaurant} @ ${time.value}`,
+      },
+    };
+  }
+
+  return {
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: 'No leader yet',
+    },
+  };
 };
 
 export { session, startLunchtime, vote, veto, sessionToBlocks, addTime, resetSession };
