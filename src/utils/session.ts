@@ -20,7 +20,11 @@ type Session = {
   [id: string]: { suggestions: Suggestion[], times: Time[] }
 }
 
-const session: Session = { }
+let session: Session = { }
+
+const resetSession = () => {
+  session = {}
+}
 
 const startLunchtime = (user: string) => {
   session[user] = { suggestions: getRandomUniqueSuggestions(3), times: [] }
@@ -71,14 +75,15 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
 const addTime = (user: string, value: string, restaurantId: string) => {
   let times = session['blokash'].times
 
-  const isTimeAlreadyIncluded = times.some(t => t.value === value)
+  const isTimeAlreadyIncluded = times.some(t => t.value === value && t.restaurantId === restaurantId)
   if (!isTimeAlreadyIncluded) {
     times.push({ value, votingUsers: [], restaurantId })
   }
 
   times = times.map(t => {
-    const shouldChange = t.value === value
+    const shouldChange = t.value === value && t.restaurantId === restaurantId
     if (!shouldChange) {
+      console.log('early return')
       return t
     }
 
@@ -230,5 +235,6 @@ export {
   vote,
   veto,
   sessionToBlocks,
-  addTime
+  addTime,
+  resetSession
 }

@@ -2,7 +2,7 @@ import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
 import { getLunchtime, getSuggestion } from '../utils/suggest';
-import { session, sessionToBlocks, startLunchtime, vote, veto, addTime } from '../utils/session';
+import { session, sessionToBlocks, startLunchtime, vote, veto, addTime, resetSession } from '../utils/session';
 import { BlockAction, InteractiveAction, SlackAction } from '@slack/bolt';
 
 const initCommands = (app: App) => {
@@ -10,6 +10,7 @@ const initCommands = (app: App) => {
     // Acknowledge command request
     await ack();
     await say('Lunchtime!');
+    resetSession()
     startLunchtime('blokash')
     const blocks = sessionToBlocks('blokash')
     console.log('session:', JSON.stringify(session))
