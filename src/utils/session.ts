@@ -1,6 +1,12 @@
 import { Block, KnownBlock } from '@slack/bolt';
 import { restaurants } from '../constants/data.json';
-import { getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById, getCusineEmoji } from '../utils/suggest';
+import {
+  getRandomUniqueSuggestions,
+  getStarRating,
+  formatDistance,
+  getRestaurantById,
+  getCusineEmoji,
+} from '../utils/suggest';
 import { SLACK_BOT_OAUTH_TOKEN } from './env';
 
 // @ts-ignore
@@ -100,9 +106,9 @@ const addTime = (user: string, value: string, restaurantId: string) => {
 };
 
 const compareTimes = (a: Time, b: Time) => {
-  const getComparisonValue = (t: Time) => Number(t.value.replace(':', ''))
-  return getComparisonValue(a) - getComparisonValue(b)
-}
+  const getComparisonValue = (t: Time) => Number(t.value.replace(':', ''));
+  return getComparisonValue(a) - getComparisonValue(b);
+};
 
 const sessionToBlocks = (user: string): KnownBlock[] => {
   // main voting
@@ -111,40 +117,51 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
   session[user].suggestions.forEach((s, i) => {
     const timesForSuggestion = session[user].times.filter((t) => String(t.restaurantId) === s.id);
 
-    let textOfTimesForSuggestion = `\n${timesForSuggestion.sort(compareTimes)
+    let textOfTimesForSuggestion = `\n${timesForSuggestion
+      .sort(compareTimes)
       .map((t) => (t.votingUsers.length > 0 ? `${t.value}: ${t.votingUsers.join(', ')}` : ''))
       .join('\n')}`;
 
-    blocks.push({
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: `${getCusineEmoji(s.type)} *${s.name}*\n${s.address}`,
+    blocks.push(
+      {
+        type: 'header',
+        text: {
+          type: 'plain_text',
+          text: `${getCusineEmoji(s.type)} ${s.name}`,
+          emoji: true,
+        },
       },
-      fields: [
-        {
+      {
+        type: 'section',
+        text: {
           type: 'mrkdwn',
-          text: `*Rating:* ${s.rating}`,
+          text: `${s.address}`,
         },
-        {
-          type: 'mrkdwn',
-          text: `*Rating Count:* ${s.rating_count}`,
+        fields: [
+          {
+            type: 'mrkdwn',
+            text: `*Rating:* ${s.rating}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Rating Count:* ${s.rating_count}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Cuisine:* ${s.type}`,
+          },
+          {
+            type: 'mrkdwn',
+            text: `*Distance:* ${formatDistance(s.distance)}`,
+          },
+        ],
+        accessory: {
+          type: 'image',
+          image_url: `${s.image_url}`,
+          alt_text: 'alt text for image',
         },
-        {
-          type: 'mrkdwn',
-          text: `*Cuisine:* ${s.type}`,
-        },
-        {
-          type: 'mrkdwn',
-          text: `*Distance:* ${formatDistance(s.distance)}`,
-        },
-      ],
-      accessory: {
-        type: 'image',
-        image_url: `${s.image_url}`,
-        alt_text: 'alt text for image',
-      },
-    });
+      }
+    );
 
     blocks.push({
       type: 'section',
