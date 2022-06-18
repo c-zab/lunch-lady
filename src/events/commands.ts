@@ -2,8 +2,8 @@ import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
 import { getLunchtime, getSuggestion } from '../utils/suggest';
-import { session, sessionToBlocks, startLunchtime, vote, veto } from '../utils/session';
-import { BlockAction, SlackAction } from '@slack/bolt';
+import { session, sessionToBlocks, startLunchtime, vote, veto, addTime } from '../utils/session';
+import { BlockAction, InteractiveAction, SlackAction } from '@slack/bolt';
 
 const initCommands = (app: App) => {
   app.command('/lunchtime', async ({ command, ack, say, payload }) => {
@@ -43,6 +43,26 @@ const initCommands = (app: App) => {
     // console.log('session')
     // console.log(JSON.stringify(session))
     veto((body as any).user.username, (payload as any).value)
+    await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
+  })
+
+  app.action('select-time', async ({ ack, body, payload, action, respond }) => {
+    await ack()
+    // console.log('body')
+    // console.log(JSON.stringify(body, undefined, 2))
+    //     console.log('action')
+    // console.log(JSON.stringify(action))
+    addTime((body as any).user.username, (action as any).selected_time)
+    await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
+  })
+
+  app.action('vote-time', async ({ ack, body, payload, action, respond }) => {
+    await ack()
+    // console.log('body')
+    // console.log(JSON.stringify(body, undefined, 2))
+    //     console.log('action')
+    // console.log(JSON.stringify(action))
+    addTime((body as any).user.username, (action as any).value)
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
   })
 

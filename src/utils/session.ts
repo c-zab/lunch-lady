@@ -11,7 +11,7 @@ export type Suggestion = {
 }
 
 export type Time = {
-  value: unknown,
+  value: string,
   votingUsers: string[]
 }
 
@@ -61,6 +61,33 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
 
     return suggestion
   })
+}
+
+const addTime = (user: string, value: string) => {
+  let times = session['blokash'].times
+
+  const isTimeAlreadyIncluded = times.some(t => t.value === value)
+  if (!isTimeAlreadyIncluded) {
+    times.push({ value, votingUsers: []})
+  }
+
+  times = times.map(t => {
+    const shouldChange = t.value === value
+    if (!shouldChange) {
+      return t
+    }
+
+    const isUserAlreadyIncluded = t.votingUsers.includes(user)
+
+    return {
+      ...t,
+      votingUsers: isUserAlreadyIncluded
+        ? t.votingUsers.filter(votingUser => votingUser !== user)
+        : [ ...t.votingUsers, user]
+    }
+  })
+
+  session['blokash'].times = times
 }
 
 const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
@@ -124,12 +151,50 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
     // ]
   } as KnownBlock)
   return blocks
-  
+}
+
+const timesToBlocks = (times: Time[]) => {
+  // selected times
+  const blocks: KnownBlock[] = times.map(t => {
+    return {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `${t.value}: ${t.votingUsers.join(', ')}`
+      }, 
+			accessory: {
+				type: "button",
+				text: {
+					type: "plain_text",
+					text: "Vote",
+					emoji: true
+				},
+				value: `${t.value}`,
+				action_id: "vote-time"
+			}
+    } as KnownBlock
+
+  })
+
+  // time select
+  blocks.push({ type: "actions", elements: [
+    {
+      type: 'timepicker',
+      "initial_time": "12:00",
+      "placeholder": {
+        "type": "plain_text",
+        "text": "Select time"
+      },
+      "action_id": "select-time"
+    }
+  ]})
+
+  return blocks
 }
 
 const sessionToBlocks = (user: string) => {
   // console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
-  return suggestionsToBlocks(session[user].suggestions)
+  return [...suggestionsToBlocks(session[user].suggestions), ...timesToBlocks(session[user].times)]
 }
 
 export {
@@ -137,5 +202,6 @@ export {
   startLunchtime,
   vote,
   veto,
-  sessionToBlocks
+  sessionToBlocks,
+  addTime
 }
