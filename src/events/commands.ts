@@ -1,7 +1,7 @@
 import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
-import { suggestNew } from '../utils/suggest';
+import { getSuggestion } from '../utils/suggest';
 
 const initCommands = (app: App) => {
   app.command('/lunchtime', async ({ command, ack, say }) => {
@@ -10,10 +10,16 @@ const initCommands = (app: App) => {
     await say('Lunchtime!');
   });
 
-  app.command('/suggest', async ({ command, ack, say }) => {
-    // Acknowledge command request
+  app.command('/suggest', async ({ body, payload, command, ack, say }) => {
     await ack();
-    await say('Suggest!');
+    await say(payload.user_name);
+    await say(getSuggestion());
+
+  });
+
+  app.action('new-suggestion', async ({ body, payload, ack, say, respond, action }) => {
+    await ack();
+    await respond(getSuggestion());
   });
 
   app.command('/time', async ({ command, ack, say }) => {

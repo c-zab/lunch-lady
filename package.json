@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nodemon",
+    "dev": "yarn build & nodemon",
     "build": "tsc",
     "start": "node ./build/index.js",
     "lint": "eslint --ext .ts src/",
