@@ -1,14 +1,29 @@
 import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
-import { getSuggestion } from '../utils/suggest';
+import { getLunchtime, getSuggestion } from '../utils/suggest';
+import { session, sessionToBlocks, startLunchtime } from '../utils/session';
+
+const sessions = {
+
+}
 
 const initCommands = (app: App) => {
-  app.command('/lunchtime', async ({ command, ack, say }) => {
+  app.command('/lunchtime', async ({ command, ack, say, payload }) => {
     // Acknowledge command request
     await ack();
     await say('Lunchtime!');
+    startLunchtime(payload.user_name)
+    const blocks = sessionToBlocks(payload.user_name)
+    console.log('session:', JSON.stringify(session))
+    await say({ blocks })
   });
+
+  app.action('vote', async({ body, payload, action, ack, say, respond }) => {
+    await ack();
+    // @ts-ignore
+    await respond(body.user.username);
+  })
 
   app.command('/suggest', async ({ body, payload, command, ack, say }) => {
     await ack();
