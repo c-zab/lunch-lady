@@ -28,7 +28,11 @@ const getRandomUniqueRestaurants = (numRestaurants: number, excludeIds: number[]
 
   while (restaurants.length < numRestaurants) {
     const restaurant = getRandomRestaurant();
-    if (!restaurants.find((r) => (r.id === restaurant.id) && (!excludeIds.includes(r.id)))) {
+
+    const isRestaurantAlreadyInArray = restaurants.find((r) => (r.id === restaurant.id))
+    const isRestaurantInExludedList = excludeIds.includes(restaurant.id)
+
+    if (!isRestaurantAlreadyInArray && !isRestaurantInExludedList) {
       restaurants.push(restaurant);
     }
   }
