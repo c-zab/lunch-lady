@@ -19,21 +19,37 @@ const startLunchtime = (user: string) => {
   session[user] = getRandomUniqueSuggestions(3)
 }
 
-const vote = (user: string, sessionId:string, voteId: string) => {
-  session[sessionId].map(suggestion => ({
-    ...suggestion,
-    votingUsers: [...suggestion.votingUsers, user]
-  }))
+const vote = (user: string, sessionId:string) => {
+  console.log('vote', user, sessionId)
+  console.info('session', JSON.stringify(session[sessionId], undefined, 4))
+  session[user] = session[user].map(suggestion => {
+    const shouldIncrement = suggestion.id === Number(sessionId)
+    return {
+      ...suggestion,
+      votingUsers: shouldIncrement ? [...suggestion.votingUsers, user] : suggestion.votingUsers
+    }
+  })
 }
 
 const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
+  console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
   const blocks: KnownBlock[] = suggestions.map(s => {
     return {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `${s.name}`
-      }
+        text: `${s.name}: ${s.votingUsers.join(', ')}`
+      }, 
+			accessory: {
+				type: "button",
+				text: {
+					type: "plain_text",
+					text: "Vote",
+					emoji: true
+				},
+				value: `${s.id}`,
+				action_id: "vote"
+			}
     } as KnownBlock
   })
 
@@ -42,6 +58,7 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
 }
 
 const sessionToBlocks = (user: string) => {
+  console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
   return suggestionsToBlocks(session[user])
 }
 

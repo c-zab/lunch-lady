@@ -2,11 +2,8 @@ import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
 import { getLunchtime, getSuggestion } from '../utils/suggest';
-import { session, sessionToBlocks, startLunchtime } from '../utils/session';
-
-const sessions = {
-
-}
+import { session, sessionToBlocks, startLunchtime, vote } from '../utils/session';
+import { BlockAction } from '@slack/bolt';
 
 const initCommands = (app: App) => {
   app.command('/lunchtime', async ({ command, ack, say, payload }) => {
@@ -21,8 +18,14 @@ const initCommands = (app: App) => {
 
   app.action('vote', async({ body, payload, action, ack, say, respond }) => {
     await ack();
-    // @ts-ignore
-    await respond(body.user.username);
+    vote((body as any).user.username, (payload as any).value)
+    console.log(session)
+    // console.log('body')
+    // console.log(JSON.stringify(body, undefined, 2))
+    // console.log('payload')
+    // console.log(JSON.stringify(payload))
+    // console.log('action')
+    // console.log(JSON.stringify(action))
   })
 
   app.command('/suggest', async ({ body, payload, command, ack, say }) => {
