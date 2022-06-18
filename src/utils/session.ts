@@ -53,7 +53,11 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
 
   session[sessionId].suggestions = theSession.suggestions.map(suggestion => {
     // can't veto a suggestion that already has votes
-    const hasVotes = suggestion.votingUsers.length > 0
+    const hasVotes = theSession.times.find(t =>
+      Number(t.restaurantId) === suggestion.id
+      && t.votingUsers.length > 0
+    )
+
     const shouldReplace = !keepSuggestionIds.includes(suggestion.id) && !hasVotes
     if (shouldReplace) {
       const newSuggestion = getRandomUniqueSuggestions(1, keepSuggestionIds)
