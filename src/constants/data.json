@@ -1,110 +1,124 @@
 {
-    "restaurants":
-    [
+    "restaurants": [
         {
-            "id":1,
-            "name":"ImPerfect Fresh Eats",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 1,
+            "name": "ImPerfect Fresh Eats",
+            "cuisine": "Salads",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":2,
-            "name":"FLOCK Rotisserie + Greens",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 2,
+            "name": "FLOCK Rotisserie + Greens",
+            "cuisine": "Salads",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":3,
-            "name":"La Carnita",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 3,
+            "name": "La Carnita",
+            "cuisine": "Mexican",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":4,
-            "name":"Burgers n'Fries Forever",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 4,
+            "name": "Burgers n'Fries Forever",
+            "cuisine": "Fast food",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":5,
-            "name":"Chipotle Mexican Grill",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 5,
+            "name": "Chipotle Mexican Grill",
+            "cuisine": "Mexican",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":6,
-            "name":"Illstyl3 Sammies",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 6,
+            "name": "Illstyl3 Sammies",
+            "cuisine": "Sandwich",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":7,
-            "name":"Hey Lucy's Wood Oven Pizza",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 7,
+            "name": "Hey Lucy's Wood Oven Pizza",
+            "cuisine": "Italian",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":8,
-            "name":"Fresh Restaurant",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 8,
+            "name": "Fresh Restaurant",
+            "cuisine": "Fusion",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":9,
-            "name":"Gabby's King West",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 9,
+            "name": "Gabby's King West",
+            "cuisine": "Fast food",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":10,
-            "name":"Banh Mi Boys",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 10,
+            "name": "Banh Mi Boys",
+            "cuisine": "Vietnamese",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":11,
-            "name":"A&W",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 11,
+            "name": "A&W",
+            "cuisine": "Fast food",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":12,
-            "name":"Burrito Boyz",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 12,
+            "name": "Burrito Boyz",
+            "cuisine": "Mexican",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":13,
-            "name":"Oh My Gyro",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 13,
+            "name": "Oh My Gyro",
+            "cuisine": "Mediterranean",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":14,
-            "name":"French Made",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 14,
+            "name": "French Made",
+            "cuisine": "Cafe",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         },
         {
-            "id":15,
-            "name":"General Assembly Pizza",
-            "address":"123 Main St",
-            "rating":null,
-            "rating_count":0
+            "id": 15,
+            "name": "General Assembly Pizza",
+            "cuisine": "Italian",
+            "address": "123 Main St",
+            "rating": null,
+            "rating_count": 0
         }
     ]
- }
+}
