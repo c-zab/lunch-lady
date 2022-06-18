@@ -2,7 +2,7 @@ import { App } from '../utils/slack';
 import { formatMessage } from '../utils/format';
 import restaurants from '../constants/data.json';
 import { getLunchtime, getSuggestion } from '../utils/suggest';
-import { session, sessionToBlocks, startLunchtime, vote } from '../utils/session';
+import { session, sessionToBlocks, startLunchtime, vote, veto } from '../utils/session';
 import { BlockAction, SlackAction } from '@slack/bolt';
 
 const initCommands = (app: App) => {
@@ -10,7 +10,7 @@ const initCommands = (app: App) => {
     // Acknowledge command request
     await ack();
     await say('Lunchtime!');
-    startLunchtime(payload.user_name)
+    startLunchtime('blokash')
     const blocks = sessionToBlocks(payload.user_name)
     console.log('session:', JSON.stringify(session))
     await say({ blocks })
@@ -19,30 +19,31 @@ const initCommands = (app: App) => {
   app.action('vote', async({ body, payload, action, ack, say, respond }) => {
     await ack();
     vote((body as any).user.username, (payload as any).value)
-    console.log(session)
-    console.log('respond', )
+    // console.log(session)
+    // console.log('respond', )
     // @ts-ignore
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
-    console.log('body')
-    console.log(JSON.stringify(body, undefined, 2))
+    // console.log('body')
+    // console.log(JSON.stringify(body, undefined, 2))
     // body.message.blocks
-    console.log('payload')
-    console.log(JSON.stringify(payload))
-    console.log('action')
-    console.log(JSON.stringify(action))
-    console.log('session')
-    console.log(JSON.stringify(session))
+    // console.log('payload')
+    // console.log(JSON.stringify(payload))
+    // console.log('action')
+    // console.log(JSON.stringify(action))
+    // console.log('session')
+    // console.log(JSON.stringify(session))
   })
 
-  app.action(/veto-\d+/, async({ ack, say, payload, action }) => {
+  app.action(/veto-\d+/, async({ ack, say, body, payload, action, respond }) => {
     await ack()
-    console.log('payload')
-    console.log(JSON.stringify(payload))
-    console.log('action')
-    console.log(JSON.stringify(action))
-    console.log('session')
-    console.log(JSON.stringify(session))
-    await say(`veto ${(payload as any).value}` )
+    // console.log('payload')
+    // console.log(JSON.stringify(payload))
+    // console.log('action')
+    // console.log(JSON.stringify(action))
+    // console.log('session')
+    // console.log(JSON.stringify(session))
+    veto((body as any).user.username, (payload as any).value)
+    await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
   })
 
   app.command('/suggest', async ({ body, payload, command, ack, say }) => {

@@ -9,12 +9,12 @@ type Restaurant = {
   rating_count: number
 }
 
-const getRandomRestaurant = () => {
+const getRandomRestaurant = (): Restaurant => {
   return restaurants[Math.floor(Math.random() * restaurants.length)];
 }
 
-const getRandomUniqueSuggestions = (numSuggestions: number): Suggestion[] => {
-  const restaurants = getRandomUniqueRestaurants(numSuggestions);
+const getRandomUniqueSuggestions = (numSuggestions: number, excludeIds: number[] = []): Suggestion[] => {
+  const restaurants = getRandomUniqueRestaurants(numSuggestions, excludeIds);
 
   return restaurants.map((restaurant: Restaurant) => ({
     name: restaurant.name,
@@ -23,13 +23,12 @@ const getRandomUniqueSuggestions = (numSuggestions: number): Suggestion[] => {
   }))
 }
 
-const getRandomUniqueRestaurants = (numRestaurants: number) => {
-  let restaurants: any = [];
+const getRandomUniqueRestaurants = (numRestaurants: number, excludeIds: number[] = []) => {
+  let restaurants: Restaurant[] = [];
 
   while (restaurants.length < numRestaurants) {
     const restaurant = getRandomRestaurant();
-    // @ts-ignore
-    if (!restaurants.find(r => r.id === restaurant.id)) {
+    if (!restaurants.find((r) => (r.id === restaurant.id) && (!excludeIds.includes(r.id)))) {
       restaurants.push(restaurant);
     }
   }

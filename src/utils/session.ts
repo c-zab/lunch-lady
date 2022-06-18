@@ -36,8 +36,27 @@ const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') 
   })
 }
 
+const veto = (user: string, suggestionId: string, sessionId: string = 'blokash') => {
+  console.log('veto')
+  const theSession = session[sessionId]
+  console.log('current session', theSession)
+
+  const keepSuggestionIds: number[] = theSession.filter(s => s.id !== Number(suggestionId)).map(s => s.id)
+  console.log('keep ids:', keepSuggestionIds)
+
+  session[sessionId] = theSession.map(suggestion => {
+    const shouldReplace = !keepSuggestionIds.includes(suggestion.id)
+    if (shouldReplace) {
+      const newSuggestion = getRandomUniqueSuggestions(1, keepSuggestionIds)
+      return newSuggestion[0]
+    }
+
+    return suggestion
+  })
+}
+
 const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
-  console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
+  // console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
   // main voting
   const blocks: KnownBlock[] = suggestions.map(s => {
     return {
@@ -101,7 +120,7 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
 }
 
 const sessionToBlocks = (user: string) => {
-  console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
+  // console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
   return suggestionsToBlocks(session[user])
 }
 
@@ -109,5 +128,6 @@ export {
   session,
   startLunchtime,
   vote,
+  veto,
   sessionToBlocks
 }
