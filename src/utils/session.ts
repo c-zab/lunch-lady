@@ -12,6 +12,7 @@ export type Suggestion = {
 
 export type Time = {
   value: string,
+  restaurantId: string
   votingUsers: string[]
 }
 
@@ -63,12 +64,12 @@ const veto = (user: string, suggestionId: string, sessionId: string = 'blokash')
   })
 }
 
-const addTime = (user: string, value: string) => {
+const addTime = (user: string, value: string, restaurantId: string) => {
   let times = session['blokash'].times
 
   const isTimeAlreadyIncluded = times.some(t => t.value === value)
   if (!isTimeAlreadyIncluded) {
-    times.push({ value, votingUsers: []})
+    times.push({ value, votingUsers: [], restaurantId })
   }
 
   times = times.map(t => {
@@ -90,43 +91,70 @@ const addTime = (user: string, value: string) => {
   session['blokash'].times = times
 }
 
-const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
+const sessionToBlocks = (user: string): KnownBlock[] => {
   // console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
   // main voting
-  const blocks: KnownBlock[] = suggestions.map(s => {
-    return {
+  const blocks: KnownBlock[] = []
+  console.log('times', session[user].times)
+
+
+  session[user].suggestions.forEach((s, i) => {
+    const timesForSuggestion = session[user].times.filter(t => Number(t.restaurantId) === s.id)
+
+    console.log('timesForSuggestion', timesForSuggestion)
+
+    let textOfTimesForSuggestion = `\n${timesForSuggestion.map(t =>
+      t.votingUsers.length > 0 ? `${t.value}: ${t.votingUsers.join(', ')}` : ''
+    ).join('\n')}`
+
+    blocks.push({
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `${s.name}: ${s.votingUsers.join(', ')}`
-      }, 
-			accessory: {
-				type: "button",
-				text: {
-					type: "plain_text",
-					text: "Vote",
-					emoji: true
-				},
-				value: `${s.id}`,
-				action_id: "vote"
-			}
-    } as KnownBlock
+        text: `*${s.name}*\n${textOfTimesForSuggestion}`
+      }
+    })
 
+    blocks.push({
+      type: 'actions',
+      elements: [
+        {
+          type: 'timepicker',
+          // "initial_time": "00:00",
+          "placeholder": {
+            "type": "plain_text",
+            "text": "Select time"
+          },
+          "action_id": `selecttime-${s.id}`
+        },
+        {
+          type: 'button',
+          text: {
+            type: 'plain_text',
+            text: `Veto`
+          },
+          value: `${s.id}`,
+          action_id: `veto-${i}`
+        }
+      ]
+    })
+
+    return blocks
   })
   
 
   // veto buttons
-  blocks.push({
-    type: "actions",
-    elements: suggestions.map((s, i) => ({
-      type: 'button',
-      text: {
-        type: 'plain_text',
-        text: `Veto ${s.name}`
-      },
-      value: `${s.id}`,
-      action_id: `veto-${i}`
-    }))
+  // blocks.push({
+  //   type: "actions",
+  //   elements: suggestions.map((s, i) => ({
+  //     type: 'button',
+  //     text: {
+  //       type: 'plain_text',
+  //       text: `Veto ${s.name}`
+  //     },
+  //     value: `${s.id}`,
+  //     action_id: `veto-${i}`
+  //   }))
     // "elements": [
     //   {
     //     "type": "button",
@@ -149,7 +177,7 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
     //     "action_id": "actionId-1"
     //   }
     // ]
-  } as KnownBlock)
+  // } as KnownBlock)
   return blocks
 }
 
@@ -190,11 +218,6 @@ const timesToBlocks = (times: Time[]) => {
   ]})
 
   return blocks
-}
-
-const sessionToBlocks = (user: string) => {
-  // console.log('sessionsToBlocks', JSON.stringify(session[user], undefined, 2))
-  return [...suggestionsToBlocks(session[user].suggestions), ...timesToBlocks(session[user].times)]
 }
 
 export {

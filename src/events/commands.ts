@@ -46,25 +46,31 @@ const initCommands = (app: App) => {
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
   })
 
-  app.action('select-time', async ({ ack, body, payload, action, respond }) => {
+  app.action(/selecttime-\d+/, async ({ ack, body, payload, action, respond }) => {
     await ack()
-    // console.log('body')
-    // console.log(JSON.stringify(body, undefined, 2))
-    //     console.log('action')
-    // console.log(JSON.stringify(action))
-    addTime((body as any).user.username, (action as any).selected_time)
+    console.log('body')
+    console.log(JSON.stringify(body, undefined, 2))
+        console.log('action')
+    console.log(JSON.stringify(action))
+
+    // restaurantId smuggled in through action_id
+    const restaurantId = (action as any).action_id.split('-')[1]
+
+
+    addTime((body as any).user.username, (action as any).selected_time, restaurantId)
+    console.log('session', session)
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
   })
 
-  app.action('vote-time', async ({ ack, body, payload, action, respond }) => {
-    await ack()
-    // console.log('body')
-    // console.log(JSON.stringify(body, undefined, 2))
-    //     console.log('action')
-    // console.log(JSON.stringify(action))
-    addTime((body as any).user.username, (action as any).value)
-    await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
-  })
+  // app.action('vote-time', async ({ ack, body, payload, action, respond }) => {
+  //   await ack()
+  //   // console.log('body')
+  //   // console.log(JSON.stringify(body, undefined, 2))
+  //       console.log('action')
+  //   console.log(JSON.stringify(action))
+  //   addTime((body as any).user.username, (action as any).value)
+  //   await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
+  // })
 
   app.command('/suggest', async ({ body, payload, command, ack, say }) => {
     await ack();
