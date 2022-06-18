@@ -1,36 +1,25 @@
 import { App } from '../utils/slack';
-import { faq } from '../constants/faq'
 import { formatMessage } from '../utils/format';
+import restaurants from '../constants/data.json';
 
 const initCommands = (app: App) => {
-
-  app.command("/knowledge", async ({ command, ack, say }) => {
-    try {
-      await ack();
-      const args = command.text.split('|').map((arg) => arg.trim());
-      const [keyword, question] = args;
-      const foundFaq = faq.find((entry) => {
-        entry.keyword.includes(keyword) || entry.question.includes(question)
-      })
-      if (foundFaq) {
-        say({ 
-          blocks: [
-            formatMessage("Yaaay! Found a FAQ with that keyword or question!"),
-            formatMessage('*Question ❓*'),
-            formatMessage(foundFaq.question),
-            formatMessage('*Answer ✔️*'),
-            formatMessage(foundFaq.answer),
-          ]
-        })
-      } else {
-        say("Noo! Can't find a entry with that keyword!");
-      }
-    } catch (error) {
-      console.log("err")
-      console.error(error);
-    }
+  app.command('/lunchtime', async ({ command, ack, say }) => {
+    // Acknowledge command request
+    await ack();
+    await say('Lunchtime!');
   });
 
-}
+  app.command('/suggest', async ({ command, ack, say }) => {
+    // Acknowledge command request
+    await ack();
+    await say('Suggest!');
+  });
 
-export { initCommands }
+  app.command('/time', async ({ command, ack, say }) => {
+    // Acknowledge command request
+    await ack();
+    await say('Time!');
+  });
+};
+
+export { initCommands };
