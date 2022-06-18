@@ -129,4 +129,8 @@ const formatDistance = (distance: number): string => {
   return `${distance.toFixed(2)} m`;
 };
 
-export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance };
+const sleep = (ms: any) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
+
+export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance, sleep };
