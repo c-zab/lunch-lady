@@ -14,7 +14,6 @@ const initCommands = (app: App) => {
     await ack();
     await say(payload.user_name);
     await say(getSuggestion());
-
   });
 
   app.action('new-suggestion', async ({ body, payload, ack, say, respond, action }) => {
@@ -25,7 +24,7 @@ const initCommands = (app: App) => {
   app.command('/time', async ({ command, ack, say }) => {
     // Acknowledge command request
     await ack();
-    suggestNew();
+    await say('Time!');
   });
 };
 
