@@ -19,11 +19,11 @@ const startLunchtime = (user: string) => {
   session[user] = getRandomUniqueSuggestions(3)
 }
 
-const vote = (user: string, sessionId:string) => {
-  console.log('vote', user, sessionId)
-  console.info('session', JSON.stringify(session[sessionId], undefined, 4))
-  session[user] = session[user].map(suggestion => {
-    const shouldIncrement = suggestion.id === Number(sessionId)
+const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') => {
+  console.log('vote', user, suggestionId)
+  console.info('session', JSON.stringify(session[user], undefined, 4))
+  session[sessionId] = session[sessionId].map(suggestion => {
+    const shouldIncrement = suggestion.id === Number(suggestionId)
     return {
       ...suggestion,
       votingUsers: shouldIncrement ? [...suggestion.votingUsers, user] : suggestion.votingUsers

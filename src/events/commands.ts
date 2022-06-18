@@ -20,12 +20,19 @@ const initCommands = (app: App) => {
     await ack();
     vote((body as any).user.username, (payload as any).value)
     console.log(session)
-    // console.log('body')
-    // console.log(JSON.stringify(body, undefined, 2))
-    // console.log('payload')
-    // console.log(JSON.stringify(payload))
-    // console.log('action')
-    // console.log(JSON.stringify(action))
+    console.log('respond', )
+    // @ts-ignore
+    await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
+    await say('k')
+    console.log('body')
+    console.log(JSON.stringify(body, undefined, 2))
+    // body.message.blocks
+    console.log('payload')
+    console.log(JSON.stringify(payload))
+    console.log('action')
+    console.log(JSON.stringify(action))
+    console.log('session')
+    console.log(JSON.stringify(session))
   })
 
   app.command('/suggest', async ({ body, payload, command, ack, say }) => {
