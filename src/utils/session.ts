@@ -180,7 +180,7 @@ const timesToBlocks = (times: Time[]) => {
   blocks.push({ type: "actions", elements: [
     {
       type: 'timepicker',
-      "initial_time": "12:00",
+      // "initial_time": "00:00",
       "placeholder": {
         "type": "plain_text",
         "text": "Select time"
