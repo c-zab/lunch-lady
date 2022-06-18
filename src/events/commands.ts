@@ -47,7 +47,7 @@ const initCommands = (app: App) => {
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
   })
 
-  app.action(/selecttime-\d+/, async ({ ack, body, payload, action, respond }) => {
+  app.action(/selecttime-.*/, async ({ ack, body, payload, action, respond }) => {
     await ack()
     console.log('body')
     console.log(JSON.stringify(body, undefined, 2))
