@@ -124,7 +124,7 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `<${s.url}|*${s.name}*>\n${s.address}`,
+        text: `*${s.name}*\n${s.address}`,
       },
       fields: [
         {
@@ -155,72 +155,42 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*${s.name}*\n${textOfTimesForSuggestion}`,
+        text: `${textOfTimesForSuggestion}`,
       },
     });
 
-    blocks.push({
-      type: 'actions',
-      elements: [
-        {
-          type: 'timepicker',
-          // "initial_time": "00:00",
-          placeholder: {
-            type: 'plain_text',
-            text: 'Select time',
+    blocks.push(
+      {
+        type: 'actions',
+        elements: [
+          {
+            type: 'timepicker',
+            // "initial_time": "00:00",
+            placeholder: {
+              type: 'plain_text',
+              text: 'Select time',
+            },
+            action_id: `selecttime-${s.id}`,
           },
-          action_id: `selecttime-${s.id}`,
-        },
-        {
-          type: 'button',
-          text: {
-            type: 'plain_text',
-            text: `Veto`,
+          {
+            type: 'button',
+            text: {
+              type: 'plain_text',
+              text: `Veto`,
+            },
+            value: `${s.id}`,
+            action_id: `veto-${i}`,
           },
-          value: `${s.id}`,
-          action_id: `veto-${i}`,
-        },
-      ],
-    });
+        ],
+      },
+      {
+        type: 'divider',
+      }
+    );
 
     return blocks;
   });
 
-  // veto buttons
-  // blocks.push({
-  //   type: "actions",
-  //   elements: suggestions.map((s, i) => ({
-  //     type: 'button',
-  //     text: {
-  //       type: 'plain_text',
-  //       text: `Veto ${s.name}`
-  //     },
-  //     value: `${s.id}`,
-  //     action_id: `veto-${i}`
-  //   }))
-  // "elements": [
-  //   {
-  //     "type": "button",
-  //     "text": {
-  //       "type": "plain_text",
-  //       "text": "Click Me",
-  //       "emoji": true
-  //     },
-  //     "value": "click_me_123",
-  //     "action_id": "actionId-0"
-  //   },
-  //   {
-  //     "type": "button",
-  //     "text": {
-  //       "type": "plain_text",
-  //       "text": "Click Me",
-  //       "emoji": true
-  //     },
-  //     "value": "click_me_123",
-  //     "action_id": "actionId-1"
-  //   }
-  // ]
-  // } as KnownBlock)
   return blocks;
 };
 
