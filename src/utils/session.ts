@@ -1,6 +1,7 @@
 import { Block, KnownBlock } from "@slack/bolt"
 import { restaurants } from '../constants/data.json'
 import { getRandomUniqueSuggestions } from '../utils/suggest'
+import { SLACK_BOT_OAUTH_TOKEN } from "./env"
 
 // @ts-ignore
 export type Suggestion = {
@@ -37,6 +38,7 @@ const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') 
 
 const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
   console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
+  // main voting
   const blocks: KnownBlock[] = suggestions.map(s => {
     return {
       type: "section",
@@ -55,8 +57,45 @@ const suggestionsToBlocks = (suggestions: Suggestion[]): KnownBlock[] => {
 				action_id: "vote"
 			}
     } as KnownBlock
-  })
 
+  })
+  
+
+  // veto buttons
+  blocks.push({
+    type: "actions",
+    elements: suggestions.map((s, i) => ({
+      type: 'button',
+      text: {
+        type: 'plain_text',
+        text: `Veto ${s.name}`
+      },
+      value: `${s.id}`,
+      action_id: `veto-${i}`
+    }))
+    // "elements": [
+    //   {
+    //     "type": "button",
+    //     "text": {
+    //       "type": "plain_text",
+    //       "text": "Click Me",
+    //       "emoji": true
+    //     },
+    //     "value": "click_me_123",
+    //     "action_id": "actionId-0"
+    //   },
+    //   {
+    //     "type": "button",
+    //     "text": {
+    //       "type": "plain_text",
+    //       "text": "Click Me",
+    //       "emoji": true
+    //     },
+    //     "value": "click_me_123",
+    //     "action_id": "actionId-1"
+    //   }
+    // ]
+  } as KnownBlock)
   return blocks
   
 }
