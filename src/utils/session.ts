@@ -24,9 +24,13 @@ const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') 
   console.info('session', JSON.stringify(session[user], undefined, 4))
   session[sessionId] = session[sessionId].map(suggestion => {
     const shouldIncrement = suggestion.id === Number(suggestionId)
+
+    const newVotingUsers = suggestion.votingUsers.includes(user) ? 
+      suggestion.votingUsers.filter(votingUser => votingUser !== user) 
+      : [ ...suggestion.votingUsers, user]
     return {
       ...suggestion,
-      votingUsers: shouldIncrement ? [...suggestion.votingUsers, user] : suggestion.votingUsers
+      votingUsers: shouldIncrement ? newVotingUsers : suggestion.votingUsers
     }
   })
 }

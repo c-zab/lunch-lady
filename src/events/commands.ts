@@ -23,7 +23,6 @@ const initCommands = (app: App) => {
     console.log('respond', )
     // @ts-ignore
     await respond({replace_original: true, blocks: sessionToBlocks('blokash')})
-    await say('k')
     console.log('body')
     console.log(JSON.stringify(body, undefined, 2))
     // body.message.blocks
