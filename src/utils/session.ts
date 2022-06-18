@@ -105,6 +105,11 @@ const addTime = (user: string, value: string, restaurantId: string) => {
   session['blokash'].times = times;
 };
 
+const compareTimes = (a: Time, b: Time) => {
+  const getComparisonValue = (t: Time) => Number(t.value.replace(':', ''))
+  return getComparisonValue(a) - getComparisonValue(b)
+}
+
 const sessionToBlocks = (user: string): KnownBlock[] => {
   // console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
   // main voting
@@ -116,7 +121,7 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
 
     console.log('timesForSuggestion', timesForSuggestion);
 
-    let textOfTimesForSuggestion = `\n${timesForSuggestion
+    let textOfTimesForSuggestion = `\n${timesForSuggestion.sort(compareTimes)
       .map((t) => (t.votingUsers.length > 0 ? `${t.value}: ${t.votingUsers.join(', ')}` : ''))
       .join('\n')}`;
 
