@@ -1,6 +1,6 @@
 import { Block, KnownBlock } from '@slack/bolt';
 import { restaurants } from '../constants/data.json';
-import { getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById } from '../utils/suggest';
+import { getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById, getCusineEmoji } from '../utils/suggest';
 import { SLACK_BOT_OAUTH_TOKEN } from './env';
 
 // @ts-ignore
@@ -119,12 +119,12 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `*${s.name}*\n${s.address}`,
+        text: `${getCusineEmoji(s.type)} *${s.name}*\n${s.address}`,
       },
       fields: [
         {
           type: 'mrkdwn',
-          text: `*Rating:* ${getStarRating(s.rating)}`,
+          text: `*Rating:* ${s.rating}`,
         },
         {
           type: 'mrkdwn',
@@ -200,7 +200,7 @@ const currentLeaderBlock = (): KnownBlock => {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: `Current Leader: ${restaurant} @ ${time.value}`,
+        text: `:trophy: Current Leader: ${restaurant} @ ${time.value}`,
       },
     };
   }

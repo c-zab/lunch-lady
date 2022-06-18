@@ -129,8 +129,27 @@ const getStarRating = (rating: number): string => {
   return star;
 };
 
+const getCusineEmoji = (cuisine: string) => {
+  const map = {
+    'Pizza': ':pizza:',
+    'Chicken': 'poultry_leg:',
+    'Desserts': ':cake:',
+    'Indian': ':curry:',
+    'Greek': ':oden:',
+    'Juice Bars & Smoothies': ':beverage_box:',
+    'Sushi Bars': ':sushi:',
+    'Coffee & Tea': ':coffee:',
+    'Cafes': ':coffee:',
+    'Chinese': ':takeout_box:',
+    'Bars': ':beers',
+    'Japanese': ':chopsticks:',
+  }
+  // @ts-ignore
+  return map[cuisine] ?? ':fork_and_knife:'
+}
+
 const formatDistance = (distance: number): string => {
   return `${distance.toFixed(2)} m`;
 };
 
-export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById };
+export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById, getCusineEmoji };

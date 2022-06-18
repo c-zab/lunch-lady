@@ -9,7 +9,7 @@ const initCommands = (app: App) => {
   app.command('/lunchtime', async ({ command, ack, say, payload }) => {
     // Acknowledge command request
     await ack();
-    await say('Lunchtime!');
+    await say(':sandwich: *Lunchtime!* :sandwich:\nLet the lunch decision battle begin!');
     resetSession();
     startLunchtime('blokash');
     const blocks = sessionToBlocks('blokash');
