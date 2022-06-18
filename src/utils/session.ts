@@ -1,128 +1,163 @@
-import { Block, KnownBlock } from "@slack/bolt"
-import { restaurants } from '../constants/data.json'
-import { getRandomUniqueSuggestions } from '../utils/suggest'
-import { SLACK_BOT_OAUTH_TOKEN } from "./env"
+import { Block, KnownBlock } from '@slack/bolt';
+import { restaurants } from '../constants/data.json';
+import { getRandomUniqueSuggestions, getStarRating, formatDistance } from '../utils/suggest';
+import { SLACK_BOT_OAUTH_TOKEN } from './env';
 
 // @ts-ignore
 export type Suggestion = {
-  name: string
-  id: number
-  votingUsers: string[]
-}
+  name: string;
+  id: string;
+  votingUsers: string[];
+  type: string;
+  address: string;
+  rating: number;
+  rating_count: number;
+  image_url: string;
+  url: string;
+  distance: number;
+};
 
 export type Time = {
-  value: string,
-  restaurantId: string
-  votingUsers: string[]
-}
+  value: string;
+  restaurantId: string;
+  votingUsers: string[];
+};
 
 type Session = {
-  [id: string]: { suggestions: Suggestion[], times: Time[] }
-}
+  [id: string]: { suggestions: Suggestion[]; times: Time[] };
+};
 
-let session: Session = { }
+let session: Session = {};
 
 const resetSession = () => {
-  session = {}
-}
+  session = {};
+};
 
 const startLunchtime = (user: string) => {
-  session[user] = { suggestions: getRandomUniqueSuggestions(3), times: [] }
-}
+  session[user] = { suggestions: getRandomUniqueSuggestions(3), times: [] };
+};
 
-const vote = (user: string, suggestionId:string, sessionId: string = 'blokash') => {
-  console.log('vote', user, suggestionId)
-  console.info('session', JSON.stringify(session[user], undefined, 4))
-  session[sessionId].suggestions = session[sessionId].suggestions.map(suggestion => {
-    const shouldIncrement = suggestion.id === Number(suggestionId)
+const vote = (user: string, suggestionId: string, sessionId: string = 'blokash') => {
+  console.log('vote', user, suggestionId);
+  console.info('session', JSON.stringify(session[user], undefined, 4));
+  session[sessionId].suggestions = session[sessionId].suggestions.map((suggestion) => {
+    const shouldIncrement = suggestion.id === String(suggestionId);
 
-    const newVotingUsers = suggestion.votingUsers.includes(user) ? 
-      suggestion.votingUsers.filter(votingUser => votingUser !== user) 
-      : [ ...suggestion.votingUsers, user]
+    const newVotingUsers = suggestion.votingUsers.includes(user)
+      ? suggestion.votingUsers.filter((votingUser) => votingUser !== user)
+      : [...suggestion.votingUsers, user];
     return {
       ...suggestion,
-      votingUsers: shouldIncrement ? newVotingUsers : suggestion.votingUsers
-    }
-  })
-}
+      votingUsers: shouldIncrement ? newVotingUsers : suggestion.votingUsers,
+    };
+  });
+};
 
 const veto = (user: string, suggestionId: string, sessionId: string = 'blokash') => {
-  console.log('veto')
-  const theSession = session[sessionId]
-  console.log('current session', theSession)
+  console.log('veto');
+  const theSession = session[sessionId];
+  console.log('current session', theSession);
 
+  const keepSuggestionIds: string[] = theSession.suggestions
+    .filter((s) => s.id !== String(suggestionId))
+    .map((s) => s.id);
+  console.log('keep ids:', keepSuggestionIds);
 
-  const keepSuggestionIds: number[] = theSession.suggestions.filter(s => s.id !== Number(suggestionId)).map(s => s.id)
-  console.log('keep ids:', keepSuggestionIds)
-
-  session[sessionId].suggestions = theSession.suggestions.map(suggestion => {
+  session[sessionId].suggestions = theSession.suggestions.map((suggestion) => {
     // can't veto a suggestion that already has votes
-    const hasVotes = theSession.times.find(t =>
-      Number(t.restaurantId) === suggestion.id
-      && t.votingUsers.length > 0
-    )
+    const hasVotes = theSession.times.find((t) => String(t.restaurantId) === suggestion.id && t.votingUsers.length > 0);
 
-    const shouldReplace = !keepSuggestionIds.includes(suggestion.id) && !hasVotes
+    const shouldReplace = !keepSuggestionIds.includes(suggestion.id) && !hasVotes;
     if (shouldReplace) {
-      const newSuggestion = getRandomUniqueSuggestions(1, keepSuggestionIds)
-      return newSuggestion[0]
+      const newSuggestion = getRandomUniqueSuggestions(1, keepSuggestionIds);
+      return newSuggestion[0];
     }
 
-    return suggestion
-  })
-}
+    return suggestion;
+  });
+};
 
 const addTime = (user: string, value: string, restaurantId: string) => {
-  let times = session['blokash'].times
+  let times = session['blokash'].times;
 
-  const isTimeAlreadyIncluded = times.some(t => t.value === value && t.restaurantId === restaurantId)
+  const isTimeAlreadyIncluded = times.some((t) => t.value === value && t.restaurantId === restaurantId);
   if (!isTimeAlreadyIncluded) {
-    times.push({ value, votingUsers: [], restaurantId })
+    times.push({ value, votingUsers: [], restaurantId });
   }
 
-  times = times.map(t => {
-    const shouldChange = t.value === value && t.restaurantId === restaurantId
+  times = times.map((t) => {
+    const shouldChange = t.value === value && t.restaurantId === restaurantId;
     if (!shouldChange) {
-      console.log('early return')
-      return t
+      console.log('early return');
+      return t;
     }
 
-    const isUserAlreadyIncluded = t.votingUsers.includes(user)
+    const isUserAlreadyIncluded = t.votingUsers.includes(user);
 
     return {
       ...t,
       votingUsers: isUserAlreadyIncluded
-        ? t.votingUsers.filter(votingUser => votingUser !== user)
-        : [ ...t.votingUsers, user]
-    }
-  })
+        ? t.votingUsers.filter((votingUser) => votingUser !== user)
+        : [...t.votingUsers, user],
+    };
+  });
 
-  session['blokash'].times = times
-}
+  session['blokash'].times = times;
+};
 
 const sessionToBlocks = (user: string): KnownBlock[] => {
   // console.log('suggestionsToBlocks', JSON.stringify(suggestions, undefined, 2))
   // main voting
-  const blocks: KnownBlock[] = []
-  console.log('times', session[user].times)
-
+  const blocks: KnownBlock[] = [];
+  console.log('times', session[user].times);
 
   session[user].suggestions.forEach((s, i) => {
-    const timesForSuggestion = session[user].times.filter(t => Number(t.restaurantId) === s.id)
+    const timesForSuggestion = session[user].times.filter((t) => String(t.restaurantId) === s.id);
 
-    console.log('timesForSuggestion', timesForSuggestion)
+    console.log('timesForSuggestion', timesForSuggestion);
 
-    let textOfTimesForSuggestion = `\n${timesForSuggestion.map(t =>
-      t.votingUsers.length > 0 ? `${t.value}: ${t.votingUsers.join(', ')}` : ''
-    ).join('\n')}`
+    let textOfTimesForSuggestion = `\n${timesForSuggestion
+      .map((t) => (t.votingUsers.length > 0 ? `${t.value}: ${t.votingUsers.join(', ')}` : ''))
+      .join('\n')}`;
 
     blocks.push({
-      type: "section",
+      type: 'section',
       text: {
-        type: "mrkdwn",
-        text: `*${s.name}*\n${textOfTimesForSuggestion}`
-      }
-    })
+        type: 'mrkdwn',
+        text: `<${s.url}|*${s.name}*>\n${s.address}`,
+      },
+      fields: [
+        {
+          type: 'mrkdwn',
+          text: `*Rating:*\n${getStarRating(s.rating)}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Rating Count:*\n${s.rating_count}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Cuisine:*\n${s.type}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Distance:*\n${formatDistance(s.distance)}`,
+        },
+      ],
+      accessory: {
+        type: 'image',
+        image_url: `${s.image_url}`,
+        alt_text: 'alt text for image',
+      },
+    });
+
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*${s.name}*\n${textOfTimesForSuggestion}`,
+      },
+    });
 
     blocks.push({
       type: 'actions',
@@ -130,27 +165,26 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
         {
           type: 'timepicker',
           // "initial_time": "00:00",
-          "placeholder": {
-            "type": "plain_text",
-            "text": "Select time"
+          placeholder: {
+            type: 'plain_text',
+            text: 'Select time',
           },
-          "action_id": `selecttime-${s.id}`
+          action_id: `selecttime-${s.id}`,
         },
         {
           type: 'button',
           text: {
             type: 'plain_text',
-            text: `Veto`
+            text: `Veto`,
           },
           value: `${s.id}`,
-          action_id: `veto-${i}`
-        }
-      ]
-    })
+          action_id: `veto-${i}`,
+        },
+      ],
+    });
 
-    return blocks
-  })
-  
+    return blocks;
+  });
 
   // veto buttons
   // blocks.push({
@@ -164,77 +198,71 @@ const sessionToBlocks = (user: string): KnownBlock[] => {
   //     value: `${s.id}`,
   //     action_id: `veto-${i}`
   //   }))
-    // "elements": [
-    //   {
-    //     "type": "button",
-    //     "text": {
-    //       "type": "plain_text",
-    //       "text": "Click Me",
-    //       "emoji": true
-    //     },
-    //     "value": "click_me_123",
-    //     "action_id": "actionId-0"
-    //   },
-    //   {
-    //     "type": "button",
-    //     "text": {
-    //       "type": "plain_text",
-    //       "text": "Click Me",
-    //       "emoji": true
-    //     },
-    //     "value": "click_me_123",
-    //     "action_id": "actionId-1"
-    //   }
-    // ]
+  // "elements": [
+  //   {
+  //     "type": "button",
+  //     "text": {
+  //       "type": "plain_text",
+  //       "text": "Click Me",
+  //       "emoji": true
+  //     },
+  //     "value": "click_me_123",
+  //     "action_id": "actionId-0"
+  //   },
+  //   {
+  //     "type": "button",
+  //     "text": {
+  //       "type": "plain_text",
+  //       "text": "Click Me",
+  //       "emoji": true
+  //     },
+  //     "value": "click_me_123",
+  //     "action_id": "actionId-1"
+  //   }
+  // ]
   // } as KnownBlock)
-  return blocks
-}
+  return blocks;
+};
 
 const timesToBlocks = (times: Time[]) => {
   // selected times
-  const blocks: KnownBlock[] = times.map(t => {
+  const blocks: KnownBlock[] = times.map((t) => {
     return {
-      type: "section",
+      type: 'section',
       text: {
-        type: "mrkdwn",
-        text: `${t.value}: ${t.votingUsers.join(', ')}`
-      }, 
-			accessory: {
-				type: "button",
-				text: {
-					type: "plain_text",
-					text: "Vote",
-					emoji: true
-				},
-				value: `${t.value}`,
-				action_id: "vote-time"
-			}
-    } as KnownBlock
-
-  })
+        type: 'mrkdwn',
+        text: `${t.value}: ${t.votingUsers.join(', ')}`,
+      },
+      accessory: {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: 'Vote',
+          emoji: true,
+        },
+        value: `${t.value}`,
+        action_id: 'vote-time',
+      },
+    } as KnownBlock;
+  });
 
   // time select
-  blocks.push({ type: "actions", elements: [
-    {
-      type: 'timepicker',
-      // "initial_time": "00:00",
-      "placeholder": {
-        "type": "plain_text",
-        "text": "Select time"
+  blocks.push({
+    type: 'actions',
+    elements: [
+      {
+        type: 'timepicker',
+        // "initial_time": "00:00",
+        placeholder: {
+          type: 'plain_text',
+          text: 'Select time',
+        },
+        action_id: 'select-time',
       },
-      "action_id": "select-time"
-    }
-  ]})
+    ],
+  });
 
-  return blocks
-}
+  return blocks;
+};
 
-export {
-  session,
-  startLunchtime,
-  vote,
-  veto,
-  sessionToBlocks,
-  addTime,
-  resetSession
-}
+export { session, startLunchtime, vote, veto, sessionToBlocks, addTime, resetSession };
