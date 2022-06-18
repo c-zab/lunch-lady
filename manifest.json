@@ -11,9 +11,18 @@
     },
     "slash_commands": [
       {
-        "command": "/knowledge",
-        "description": "Display some knowledge",
-        "usage_hint": "[keyword|question]",
+        "command": "/lunchtime",
+        "description": "Lets pick where to go for lunch",
+        "should_escape": false
+      },
+      {
+        "command": "/suggest",
+        "description": "Suggest a lunch spot",
+        "should_escape": false
+      },
+      {
+        "command": "/time",
+        "description": "Create a poll to pick a time to go for lunch",
         "should_escape": false
       }
     ]
