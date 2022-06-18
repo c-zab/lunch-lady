@@ -141,8 +141,23 @@ const getCusineEmoji = (cuisine: string) => {
     'Coffee & Tea': ':coffee:',
     'Cafes': ':coffee:',
     'Chinese': ':takeout_box:',
-    'Bars': ':beers',
-    'Japanese': ':chopsticks:',
+    'Bars': ':beers:',
+    'Japanese': ':rice_ball:',
+    'Asian Fusion': ':chopsticks:',
+    'Cocktail Bars': ':tropical_drink:',
+    'Diners': ':hotdog:',
+    'Italian': ':spaghetti:',
+    'Seafood': ':lobster:',
+    'Thai': ':curry:',
+    'Mexican': ':taco:',
+    'Salad': ':green_salad:',
+    'Korean': ':kr:',
+    'Fast Food': ':fries:',
+    'Sandwiches': ':sandwich:',
+    'Chicken Wings': ':chicken:',
+    'Breakfast & Brunch': ':fried_egg',
+    'Vegan': ':broccoli:',
+    'Burgers': ':burger:'
   }
   // @ts-ignore
   return map[cuisine] ?? ':fork_and_knife:'
