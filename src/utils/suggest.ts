@@ -131,40 +131,48 @@ const getStarRating = (rating: number): string => {
 
 const getCusineEmoji = (cuisine: string) => {
   const map = {
-    'Pizza': ':pizza:',
-    'Chicken': 'poultry_leg:',
-    'Desserts': ':cake:',
-    'Indian': ':curry:',
-    'Greek': ':oden:',
+    Pizza: ':pizza:',
+    Chicken: 'poultry_leg:',
+    Desserts: ':cake:',
+    Indian: ':curry:',
+    Greek: ':oden:',
     'Juice Bars & Smoothies': ':beverage_box:',
     'Sushi Bars': ':sushi:',
     'Coffee & Tea': ':coffee:',
-    'Cafes': ':coffee:',
-    'Chinese': ':takeout_box:',
-    'Bars': ':beers:',
-    'Japanese': ':rice_ball:',
+    Cafes: ':coffee:',
+    Chinese: ':takeout_box:',
+    Bars: ':beers:',
+    Japanese: ':rice_ball:',
     'Asian Fusion': ':chopsticks:',
     'Cocktail Bars': ':tropical_drink:',
-    'Diners': ':hotdog:',
-    'Italian': ':spaghetti:',
-    'Seafood': ':lobster:',
-    'Thai': ':curry:',
-    'Mexican': ':taco:',
-    'Salad': ':green_salad:',
-    'Korean': ':kr:',
+    Diners: ':hotdog:',
+    Italian: ':spaghetti:',
+    Seafood: ':lobster:',
+    Thai: ':curry:',
+    Mexican: ':taco:',
+    Salad: ':green_salad:',
+    Korean: ':kr:',
     'Fast Food': ':fries:',
-    'Sandwiches': ':sandwich:',
+    Sandwiches: ':sandwich:',
     'Chicken Wings': ':chicken:',
     'Breakfast & Brunch': ':fried_egg',
-    'Vegan': ':broccoli:',
-    'Burgers': ':burger:'
-  }
+    Vegan: ':broccoli:',
+    Burgers: ':hamburger:',
+  };
   // @ts-ignore
-  return map[cuisine] ?? ':fork_and_knife:'
-}
+  return map[cuisine] ?? ':fork_and_knife:';
+};
 
 const formatDistance = (distance: number): string => {
   return `${distance.toFixed(2)} m`;
 };
 
-export { getSuggestion, getLunchtime, getRandomUniqueSuggestions, getStarRating, formatDistance, getRestaurantById, getCusineEmoji };
+export {
+  getSuggestion,
+  getLunchtime,
+  getRandomUniqueSuggestions,
+  getStarRating,
+  formatDistance,
+  getRestaurantById,
+  getCusineEmoji,
+};
