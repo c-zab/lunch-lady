@@ -11,7 +11,7 @@ const initCommands = (app: App) => {
     await ack();
     await say('Lunchtime!');
     startLunchtime('blokash')
-    const blocks = sessionToBlocks(payload.user_name)
+    const blocks = sessionToBlocks('blokash')
     console.log('session:', JSON.stringify(session))
     await say({ blocks })
   });
